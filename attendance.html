@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Library Availability - Attendance Portal</title>
+</head>
+<body>
+    <main id="sign">
+        <form id="att-form" class="sign-box active" aria-labelledby="reg-title" style="position: relative;">
+            <a href="index.html" style="margin-bottom: 10px;" title="Return to home page">
+                <svg viewBox="0 0 24 24" xmlns="http://w3.org">
+                    <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
+                </svg>
+            </a>
+
+            <div class="reg-head">
+                <h1 id="reg-title">Register your library attendance</h1>
+                <p class="disclosure">NB: This page is only for students who are registering into the library.</p>
+            </div>
+
+            <div class="reg-inp">
+                <select id="Library" aria-label="Library" required>
+                    <option value="" selected disabled>Library (select current library)</option>
+                </select>
+                <input type="text" id="FullName" autocomplete="name" maxlength="80" placeholder="Full name: John Doe" aria-label="Full name" required>
+                <input type="text" id="RegNo" autocomplete="off" spellcheck="false" maxlength="30" placeholder="Reg NO.: GOU/U25/CSC/100" aria-label="Registration number" required>
+                <input type="text" id="Department" autocomplete="off" maxlength="40" placeholder="Dept.: Computer Science" aria-label="Department" required>
+                <select id="Level" aria-label="Level" required>
+                    <option value="" selected disabled>Level</option>
+                    <option value="100">100 level</option>
+                    <option value="200">200 level</option>
+                    <option value="300">300 level</option>
+                    <option value="400">400 level</option>
+                    <option value="500">500 level</option>
+                </select>
+                <input type="text" id="CardNo" inputmode="numeric" pattern="[0-9]+" autocomplete="off" maxlength="10" placeholder="Card No.: 32" aria-label="Library card number" required>
+                <input type="text" id="OneTimePassword" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="OTP from library staff: 326547" aria-label="One-time password" required>
+            </div>
+
+            <p class="form-msg" id="reg-msg" role="alert" hidden></p>
+
+            <div class="sign-button">
+                <button type="submit" class="sign-btns">Mark attendance</button>
+            </div>
+        </form>
+    </main>
+
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

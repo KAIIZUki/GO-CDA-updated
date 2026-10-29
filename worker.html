@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Library Availability - Staff</title>
+</head>
+<body class="admin">
+    <header id="admin-bar">
+        <div>
+            <h1 id="a-lib">Library</h1>
+            <p id="a-user"></p>
+        </div>
+        <div class="a-actions">
+            <button class="menu-toggle staff-menu-toggle" type="button" aria-label="Open staff menu" aria-controls="worker-actions" aria-expanded="false" data-menu-toggle>
+                <span></span><span></span><span></span>
+            </button>
+            <div class="menu-panel" id="worker-actions">
+            <a href="index.html">Main site</a>
+            <button type="button" id="a-logout">Log out</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="admin-main">
+        <section class="a-card" id="a-pending" hidden>
+            <h2>Waiting for a library</h2>
+            <p class="a-note">An admin has not assigned you a library yet. This page updates automatically once they do.</p>
+        </section>
+
+        <div id="a-panel" class="a-panel">
+        <section class="a-card">
+            <h2>Library status</h2>
+            <div class="a-row">
+                <select id="a-status" aria-label="Status">
+                    <option value="pending" disabled>Awaiting staff declaration</option>
+                    <option value="open">Open</option>
+                    <option value="temp">Temporarily closed</option>
+                    <option value="closed">Closed</option>
+                </select>
+                <input type="text" id="a-reason" maxlength="120" placeholder="Reason (shown to students when not open)">
+                <button type="button" class="btn-gold" id="a-save">Save status</button>
+            </div>
+            <p class="form-msg" id="a-msg" hidden></p>
+        </section>
+
+        <section class="a-card">
+            <h2>Attendance OTP</h2>
+            <p class="a-note">Each OTP is valid for 24 hours unless cancelled or the library is temporarily closed or closed.</p>
+            <div class="a-row">
+                <span id="a-otp" class="otp">------</span>
+                <span id="a-otp-exp" class="a-note"></span>
+                <button type="button" class="btn-gold" id="a-newotp">Generate new OTP</button>
+                <button type="button" class="btn-gold" id="a-cancelotp" disabled>Cancel OTP</button>
+            </div>
+        </section>
+
+        <section class="a-card">
+            <div class="a-row between">
+                <h2>Attendance (<span id="a-inside">0</span> inside)</h2>
+                <div class="a-row">
+                    <input type="search" id="a-search" placeholder="Search name or reg no.">
+                    <button type="button" class="btn-gold" id="a-csv">Export CSV</button>
+                </div>
+            </div>
+            <div class="a-row a-attendance-controls">
+                <select id="a-sheet-select" aria-label="Attendance sheet"></select>
+                <select id="a-level-filter" aria-label="Filter by level">
+                    <option value="all">All levels</option>
+                    <option value="100">100 level</option>
+                    <option value="200">200 level</option>
+                    <option value="300">300 level</option>
+                    <option value="400">400 level</option>
+                    <option value="500">500 level</option>
+                </select>
+                <button type="button" class="btn-gold" id="a-afternoon-sheet">End current sheet &amp; start next sheet</button>
+            </div>
+            <p class="a-note">Students still marked inside on an archived sheet remain checked in; their names are highlighted in red until staff checks them out.</p>
+            <div class="a-table-wrap">
+                <table>
+                    <thead><tr><th>Time in</th><th>Name</th><th>Reg No.</th><th>Dept.</th><th>Level</th><th>Card</th><th>Time out</th><th></th></tr></thead>
+                    <tbody id="a-rows"></tbody>
+                </table>
+            </div>
+        </section>
+        </div>
+    </main>
+
+    <script type="module" src="worker.js"></script>
+    <script type="module" src="nav.js"></script>
+</body>
+</html>

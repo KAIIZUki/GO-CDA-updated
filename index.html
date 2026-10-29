@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Library Availability</title>
+</head>
+<body>
+    <section id="redirects">
+        <div class="re-left">
+            <img src="imgs/Godfrey_logo.png" alt="Godfrey_logo">
+            <h1>Godfrey Okoye University</h1>
+        </div>
+
+        <button class="menu-toggle" id="utility-menu-toggle" type="button" aria-label="Open utility menu" aria-controls="re-right" aria-expanded="false" data-menu-toggle>
+            <span></span><span></span><span></span>
+        </button>
+        <ul id="re-right" class="menu-panel">
+            <a href="https://gouni.edu.ng">Main Website</a>
+            <p>·</p>
+            <a href="http://libraries.gouni.edu.ng">Library Catalog</a>
+            <p>·</p>
+            <a href="https://erp.gouni.edu.ng/Security/Accounts/Login">ERP</a>
+            <p>·</p>
+            <a href="attendance.html" title="For debug only">Attendance</a>
+            <p>·</p>
+            <a href="login.html">Staff Login</a>
+            <p>·</p>
+            <a href="admin.html">admin</a>
+        </ul>
+    </section>
+
+    <section id="ribbon">
+        <div class="logo">
+            <h1>GO</h1>
+
+            <div class="logo-title">
+                <h2>CDA</h2>
+                <p>Campus Departments Availability</p>
+            </div>
+        </div>
+
+        <button class="menu-toggle ribbon-menu-toggle" id="ribbon-menu-toggle" type="button" aria-label="Open main menu" aria-controls="ribbon-menu" aria-expanded="false" data-menu-toggle>
+            <span></span><span></span><span></span>
+        </button>
+        <div id="ribbon-menu" class="menu-panel">
+            <nav aria-label="Main navigation">
+                <ul>
+                    <a href="index.html">Home</a>
+                    <a href="#departs">Departments</a>
+                    <a href="#departs">Announcements</a>
+                    <a href="#departs">Alerts</a>
+                </ul>
+            </nav>
+            <button title="Subscribe to email alerts" type="button">Subscribe to alerts</button>
+        </div>
+    </section>
+
+    <header>
+        <div id="hero">
+            <div class="heroL">
+                <h4>CAMPUS 1 · THINKERS CORNER</h4>
+                <h1>Know <span>before</span> you go<span>.</span></h1>
+                <p>Check whether each campus library is open, see today's
+                    hours and read closure notices, so no study session is
+                    wasted on a locked door.</p>
+
+                <div class="head-cta">
+                    <a href="#departs">See all libraries</a>
+                    <a href="" class="get-cta">Get email alerts</a>
+                </div>
+            </div>
+
+            <div class="heroR">
+                <div id="hero-actives-card" aria-live="polite">
+                    <h2>Right now</h2>
+
+                    <ul id="status-list">
+
+                    </ul>
+
+                    <p>Status as reported by library staff.</p>
+                </div>
+
+                <aside></aside>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="departs">
+            <div id="dept-title">
+                <h1>Our Libraries</h1>
+                <p>Three libraries, one place to check.</p>
+            </div>
+
+            <div id="dept-cards" aria-live="polite">
+
+            </div>
+        </section>
+    </main>
+
+    <dialog id="details-dialog" aria-labelledby="details-title">
+        <button id="details-close" type="button" aria-label="Close">×</button>
+        <h2 id="details-title"></h2>
+        <div id="details-body"></div>
+
+        <nav class="d-section" aria-label="Useful links">
+            <h3>Links</h3>
+            <ul class="d-links">
+                <li><a href="http://libraries.gouni.edu.ng" target="_blank" rel="noopener noreferrer">Library catalog</a></li>
+                <li><a href="http://libraries.gouni.edu.ng/library-rules">Library rules</a></li>
+                <li><a href="mailto:library@example.com">Email the library</a></li>
+            </ul>
+        </nav>
+    </dialog>
+
+    <script type="module" src="app.js"></script>
+    <script type="module" src="nav.js"></script>
+</body>
+</html>

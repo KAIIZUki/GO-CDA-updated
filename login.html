@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Library Availability - Staff Portal</title>
+</head>
+<body>
+    <main id="sign">
+        <form id="reg-box" class="sign-box" style="position: relative;">
+            <a href="index.html" style="margin-bottom: 10px;" title="Return to home page">
+                <svg viewBox="0 0 24 24" xmlns="http://w3.org">
+                <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
+                </svg>
+            </a>
+
+            <div class="reg-head">
+                <h1>Create a staff account</h1>
+                <p class="disclosure">NB: Staff ID Staff 5623 is the debug administrator. All other accounts need an admin to assign their role and library.</p>
+            </div>
+
+            <div class="reg-inp">
+                <div class="reg-inp2">
+                    <input type="text" id="LastName" autocomplete="family-name" placeholder="Surname" required>
+                    <input type="text" id="firstName" autocomplete="given-name" placeholder="Firstname" required>
+                </div>
+                <div class="reg-inp2">
+                    <input type="email" id="email" autocomplete="email" placeholder="Email" required>
+                    <input type="text" id="staffId" autocomplete="off" placeholder="Staff ID" required>
+                </div>
+                <div class="reg-inp2">
+                    <input type="password" id="password" autocomplete="new-password" placeholder="Password (min 8 characters)" minlength="8" required>
+                    <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Confirm Password" required>
+                </div>
+            </div>
+
+            <p class="form-msg" id="reg-msg" role="alert" hidden></p>
+
+            <div class="sign-rem">
+                <label class="alr-reg">Already registered? <a href="#" id="to-login">Login here</a></label>
+            </div>
+
+            <div class="sign-button">
+                <button type="submit" class="sign-btns" id="register-btn">Register</button>
+            </div>
+        </form>
+
+        <form id="log-box" class="sign-box">
+            <div class="reg-head">
+                <h1>Login to your staff account</h1>
+                <p class="disclosure">NB: This page is only for staff members working in a department.</p>
+            </div>
+
+            <div class="reg-inp log-inp">
+                <input type="text" id="loginStaffId" autocomplete="off" placeholder="Staff ID" required>
+                <input type="email" id="loginEmail" autocomplete="email" placeholder="Email" required>
+                <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Password" required>
+            </div>
+
+            <p class="form-msg" id="log-msg" role="alert" hidden></p>
+
+            <div class="sign-rem">
+                <label class="alr-reg">New around here? <a href="#" id="to-register">Register</a></label>
+                <div class="reg-inp-checkbox">
+                    <span class="custom-checkbox-box" id="custom-remember-click"></span>
+                    <input type="checkbox" id="remember" class="real-checkbox">
+                    <label class="label-text" for="remember">Stay signed in</label>
+                </div>
+            </div>
+
+            <div class="sign-button">
+                <button type="submit" class="sign-btns" id="login-btn">Login</button>
+            </div>
+        </form>
+    </main>
+
+    <script type="module" src="app.js"></script>
+    <script type="module" src="auth.js"></script>
+</body>
+</html>
