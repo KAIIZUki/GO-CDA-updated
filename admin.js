@@ -6,6 +6,7 @@ import {
   isUniversalAdmin,
   listStaff,
   updateStaff,
+  deleteStaff,
   logout,
   clearAppData,
   cancelOtp,
@@ -51,18 +52,28 @@ if (!s || s.role === "worker") {
     location.href = "login.html";
   };
 
-  $("a-clear-data").onclick = () => {
+  const clearMenu = $("a-clear-menu");
+  const clearOptions = [...clearMenu.querySelectorAll('input[type="checkbox"]')];
+  const clearSelected = $("a-clear-selected");
+  const updateClearButton = () => {
+    clearSelected.disabled = !clearOptions.some(option => option.checked);
+  };
+  clearOptions.forEach(option => option.addEventListener("change", updateClearButton));
+  clearSelected.onclick = () => {
     if (!isUniversalAdmin(getSession())) {
-      $("a-clear-data").hidden = true;
+      clearMenu.hidden = true;
       return;
     }
-    if (!window.confirm("Clear all staff accounts, attendance, OTPs, and library statuses from this browser? This cannot be undone.")) return;
+    const selected = clearOptions.filter(option => option.checked);
+    if (!selected.length) return;
+    const categories = selected.map(option => option.value);
+    const names = selected.map(option => option.parentElement.textContent.trim());
+    if (!window.confirm(`Clear the selected data: ${names.join(", ")}? This cannot be undone.`)) return;
     try {
-      clearAppData();
-      logout();
-      location.replace(new URL("login.html", location.href).href);
+      clearAppData(categories);
+      location.reload();
     } catch (err) {
-      flash($("a-staff-msg"), err.message, false);
+      flash($("a-clear-msg"), err.message, false);
     }
   };
 
@@ -76,7 +87,7 @@ if (!s || s.role === "worker") {
     canManageStaffList = canManageStaff(s);
     manageableLibraries = getAccessibleLibraries(s);
     const selectedLibrary = $("a-switch").value;
-    $("a-clear-data").hidden = !universal;
+    clearMenu.hidden = !universal;
     $("a-staff").hidden = !canManageStaffList;
     $("a-no-permissions").hidden = canManageStaffList || manageableLibraries.length > 0;
     $("a-switch").replaceChildren(...manageableLibraries.map(l => new Option(l.name, l.id)));
@@ -202,6 +213,8 @@ if (!s || s.role === "worker") {
     }
     return user.library === libraryId;
   };
+  const bootstrapAdmin = user => user.staffId.trim().toLowerCase() === "staff 5623";
+  const currentStaffAccount = user => user.staffId.trim().toLowerCase() === s.staffId.trim().toLowerCase();
 
   function renderStaff() {
     if (!canManageStaffList) return;
@@ -233,7 +246,25 @@ if (!s || s.role === "worker") {
       staffId.textContent = `ID: ${user.staffId}`;
       const email = document.createElement("span");
       email.textContent = user.email;
-      identity.append(name, staffId, email);
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "staff-delete-button";
+      deleteButton.textContent = "Delete staff";
+      deleteButton.setAttribute("aria-label", `Delete staff account for ${user.name}`);
+      deleteButton.hidden = user.role === "universal" || bootstrapAdmin(user);
+      deleteButton.disabled = currentStaffAccount(user);
+      deleteButton.title = deleteButton.disabled ? "You cannot delete your own account" : "";
+      deleteButton.onclick = () => {
+        if (!window.confirm(`Delete the staff account for ${user.name}? This cannot be undone.`)) return;
+        try {
+          deleteStaff(user.staffId);
+          flash($("a-staff-msg"), `Deleted ${user.name}.`, true);
+          renderStaff();
+        } catch (err) {
+          flash($("a-staff-msg"), err.message, false);
+        }
+      };
+      identity.append(name, staffId, email, deleteButton);
 
       const roles = universal ? ["worker", "admin", "universal"] : ["worker", "admin"];
       if (!roles.includes(user.role)) roles.push(user.role);
@@ -296,8 +327,8 @@ if (!s || s.role === "worker") {
       libraryPermissionLabel.className = "staff-menu-checkbox";
       libraryPermissionLabel.append(manageLibraries, document.createTextNode(" Manage library status & OTP"));
 
-      const bootstrapTarget = user.staffId.trim().toLowerCase() === "staff 5623";
-      const currentAccount = user.staffId.trim().toLowerCase() === s.staffId.trim().toLowerCase();
+      const bootstrapTarget = bootstrapAdmin(user);
+      const currentAccount = currentStaffAccount(user);
       const syncControls = () => {
         const worker = role.value === "worker";
         const admin = role.value === "admin";

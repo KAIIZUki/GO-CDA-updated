@@ -304,11 +304,35 @@ export function updateStaff(staffId, { library, role, permissions }) {
   write(K.users, users);
 }
 
-export function clearAppData() {
+export function deleteStaff(staffId) {
+  const actor = getSession();
+  if (!canManageStaff(actor)) throw new Error("You do not have permission to manage staff.");
+  const users = read(K.users, []);
+  const userIndex = users.findIndex(user => normalizeStaffId(user.staffId) === normalizeStaffId(staffId));
+  if (userIndex === -1) throw new Error("Staff member not found.");
+  const user = users[userIndex];
+  if (user.role === "universal" || isBootstrapAdmin(user.staffId))
+    throw new Error("Universal admin accounts cannot be deleted.");
+  if (normalizeStaffId(actor.staffId) === normalizeStaffId(user.staffId))
+    throw new Error("You cannot delete your own staff account.");
+  users.splice(userIndex, 1);
+  write(K.users, users);
+}
+
+export function clearAppData(categories) {
   if (!isUniversalAdmin(getSession())) throw new Error("Only a universal admin can clear app data.");
-  for (const key of Object.values(K)) {
+  if (!Array.isArray(categories) || categories.length === 0) throw new Error("Choose at least one type of app data to clear.");
+  const categoryKeys = {
+    attendance: [K.att, K.sheets]
+  };
+  const keys = new Set();
+  for (const category of categories) {
+    const categoryKeyList = categoryKeys[category];
+    if (!categoryKeyList) throw new Error("Choose valid app data to clear.");
+    categoryKeyList.forEach(key => keys.add(key));
+  }
+  for (const key of keys) {
     localStorage.removeItem(key);
     sessionStorage.removeItem(key);
   }
-  logout();
 }

@@ -26,7 +26,17 @@
             <div class="menu-panel" id="admin-actions">
                 <select id="a-switch" aria-label="Library"></select>
                 <a href="index.html">Main site</a>
-                <button type="button" id="a-clear-data" hidden>Clear app data</button>
+                <details id="a-clear-menu" class="clear-menu" hidden>
+                    <summary class="clear-menu-trigger" aria-label="Choose app data to clear" title="Choose app data to clear">
+                        <span></span><span></span><span></span>
+                    </summary>
+                    <div class="clear-menu-panel">
+                        <strong>Clear selected app data</strong>
+                        <label><input type="checkbox" value="attendance"> Attendance records and sheets</label>
+                        <button type="button" id="a-clear-selected" disabled>Clear selected</button>
+                        <p id="a-clear-msg" role="alert" hidden></p>
+                    </div>
+                </details>
                 <button type="button" id="a-logout">Log out</button>
             </div>
         </div>

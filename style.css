@@ -1188,6 +1188,26 @@ body.admin {
     font-size: 13px;
 }
 
+.staff-delete-button {
+    margin-top: 8px;
+    padding: 5px 9px;
+    border: 1px solid var(--closed-fg);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--closed-fg);
+    font: 12px var(--font-body);
+    cursor: pointer;
+}
+
+.staff-delete-button:hover:not(:disabled) {
+    background: #FDE8E5;
+}
+
+.staff-delete-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 .staff-menu-cell {
     position: relative;
     text-align: right;
@@ -1445,6 +1465,92 @@ td select[multiple] {
 #admin-bar .menu-panel a:hover {
     color: var(--white);
     scale: 1.02;
+}
+
+.clear-menu {
+    position: relative;
+}
+
+.clear-menu[hidden] {
+    display: none !important;
+}
+
+.clear-menu-trigger {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 3px;
+    border: 1px solid currentColor;
+    border-radius: 8px;
+    color: var(--cream);
+    cursor: pointer;
+    list-style: none;
+}
+
+.clear-menu-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.clear-menu-trigger::marker {
+    content: "";
+}
+
+.clear-menu-trigger span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.clear-menu-trigger:focus-visible {
+    outline: 3px solid var(--gold-500);
+    outline-offset: 2px;
+}
+
+.clear-menu-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+    display: grid;
+    width: min(300px, calc(100vw - 32px));
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--navy-900);
+    box-shadow: 0 12px 24px rgba(12, 26, 51, 0.24);
+}
+
+.clear-menu-panel label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+}
+
+.clear-menu-panel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--navy-900);
+}
+
+.clear-menu-panel button {
+    width: 100%;
+}
+
+.clear-menu-panel button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+}
+
+.clear-menu-panel #a-clear-msg {
+    margin: 0;
 }
 
 @media (max-width: 760px) {
