@@ -1,7 +1,7 @@
 // panel.js - the status / OTP / attendance panel shared by admin.html and worker.html
 import {
   getOtp, newOtp, cancelOtp, attendanceForSheet, getAttendanceSheets,
-  activeAttendanceSheet, startAfternoonSheet, checkOut, libState, setLibState
+  activeAttendanceSheet, startAfternoonSheet, renameAttendanceSheet, checkOut, libState, setLibState
 } from "./store.js";
 
 const $ = id => document.getElementById(id);
@@ -11,7 +11,18 @@ export function cell(tr, text) { const td = document.createElement("td"); td.tex
 // getLib() returns the library being managed ({id, name}) or null; getUser() the signed-in user
 export function mountPanel(getLib, getUser) {
   let selectedSheetId = null;
-  const flash = (el, text, ok) => { el.textContent = text; el.className = "form-msg " + (ok ? "ok" : "err"); el.hidden = false; };
+  const flashTimers = new WeakMap();
+  const flash = (el, text, ok, duration = 5000) => {
+    clearTimeout(flashTimers.get(el));
+    el.textContent = text;
+    el.className = "form-msg " + (ok ? "ok" : "err");
+    el.hidden = false;
+    if (duration) {
+      flashTimers.set(el, setTimeout(() => {
+        el.hidden = true;
+      }, duration));
+    }
+  };
 
   function loadStatus() {
     const lib = getLib(), cur = lib && libState(lib.id);
@@ -45,7 +56,9 @@ export function mountPanel(getLib, getUser) {
     if (!lib || !selectedSheetId) return [];
     const q = $("a-search").value.trim().toLowerCase();
     return attendanceForSheet(lib.id, selectedSheetId).sort((a, b) => b.time - a.time)
-      .filter(r => r.name.toLowerCase().includes(q) || r.regNo.toLowerCase().includes(q));
+      .filter(r => r.name.toLowerCase().includes(q)
+        || r.regNo.toLowerCase().includes(q)
+        || String(r.cardNo).toLowerCase().includes(q));
   }
 
   function renderRows() {
@@ -81,7 +94,7 @@ export function mountPanel(getLib, getUser) {
     try {
       setLibState(lib.id, { status: $("a-status").value, closureReason: $("a-reason").value.trim() || null, updatedBy: getUser().name });
       showOtp();
-      flash($("a-msg"), "Status saved.", true);
+      flash($("a-msg"), "Status saved.", true, 5000);
     } catch (err) { flash($("a-msg"), err.message, false); }
   };
 
@@ -112,6 +125,20 @@ export function mountPanel(getLib, getUser) {
   $("a-sheet-select").onchange = () => {
     selectedSheetId = $("a-sheet-select").value;
     renderRows();
+  };
+  $("a-rename-sheet").onclick = () => {
+    const lib = getLib();
+    const sheet = lib && getAttendanceSheets(lib.id).find(item => item.id === selectedSheetId);
+    if (!lib || !sheet) return;
+    const name = window.prompt("Enter a new name for this attendance sheet:", sheet.name);
+    if (name === null) return;
+    try {
+      renameAttendanceSheet(lib.id, sheet.id, name);
+      renderSheets();
+      flash($("a-msg"), "Attendance sheet renamed.", true);
+    } catch (err) {
+      flash($("a-msg"), err.message, false);
+    }
   };
   $("a-afternoon-sheet").onclick = () => {
     const lib = getLib();

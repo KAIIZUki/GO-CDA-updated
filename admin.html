@@ -50,11 +50,13 @@
                     <option value="facit">FACIT Library staff</option>
                     <option value="law">Law Library staff</option>
                 </select>
+
                 <input type="search" id="a-staff-search" placeholder="Search name, staff ID, or email" aria-label="Search staff">
             </div>
-            <div class="a-table-wrap">
-                <table>
-                    <thead><tr><th>Name</th><th>Staff ID</th><th>Email</th><th>Role</th><th>Worker library / admin scope</th><th>Manage staff</th><th>Manage library status &amp; OTP</th><th></th></tr></thead>
+            
+            <div class="a-table-wrap a-staff-table-wrap">
+                <table class="staff-table">
+                    <thead><tr><th>Staff</th><th>Manage</th></tr></thead>
                     <tbody id="a-staff-rows"></tbody>
                 </table>
             </div>
@@ -97,12 +99,15 @@
             <div class="a-row between">
                 <h2>Attendance (<span id="a-inside">0</span> Occupancy)</h2>
                 <div class="a-row">
-                    <input type="search" id="a-search" placeholder="Search name or reg no.">
+                    <input type="search" id="a-search" placeholder="Search name, reg no. card no." title="Search values: name, reg no., dept., level, card no.">
                     <button type="button" class="btn-gold" id="a-csv">Export CSV</button>
                 </div>
             </div>
             <div class="a-row a-attendance-controls">
-                <select id="a-sheet-select" aria-label="Attendance sheet"></select>
+                <div class="sheet-name-controls">
+                    <select id="a-sheet-select" aria-label="Attendance sheet"></select>
+                    <button type="button" class="btn-gold" id="a-rename-sheet">Rename sheet</button>
+                </div>
                 <select id="a-level-filter" aria-label="Filter by level">
                     <option value="all">All levels</option>
                     <option value="100">100 level</option>
@@ -113,7 +118,7 @@
                 </select>
                 <button type="button" class="btn-gold" id="a-afternoon-sheet">End current sheet &amp; start next sheet</button>
             </div>
-            <p class="a-note">Students still marked inside on an archived sheet remain checked in; their names are highlighted in red until staff checks them out.</p>
+            <p class="a-note">Students still marked inside on an archived sheet remain checked in; until staff checks them out.</p>
             <div class="a-table-wrap">
                 <table>
                     <thead><tr><th>Time in</th><th>Name</th><th>Reg No.</th><th>Dept.</th><th>Level</th><th>Card</th><th>Time out</th><th></th></tr></thead>

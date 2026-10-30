@@ -15,6 +15,7 @@ import {
   getAttendanceSheets,
   activeAttendanceSheet,
   startAfternoonSheet,
+  renameAttendanceSheet,
   checkOut,
   libState,
   setLibState
@@ -31,11 +32,18 @@ if (!s || s.role === "worker") {
   let canManageStaffList = false;
   let universal = false;
   let selectedSheetId = null;
+  const flashTimers = new WeakMap();
 
-  const flash = (el, text, ok) => {
+  const flash = (el, text, ok, duration = 5000) => {
+    clearTimeout(flashTimers.get(el));
     el.textContent = text;
     el.className = "form-msg " + (ok ? "ok" : "err");
     el.hidden = false;
+    if (duration) {
+      flashTimers.set(el, setTimeout(() => {
+        el.hidden = true;
+      }, duration));
+    }
   };
 
   $("a-logout").onclick = () => {
@@ -126,7 +134,9 @@ if (!s || s.role === "worker") {
     const query = $("a-search").value.trim().toLowerCase();
     return attendanceForSheet(lib.id, selectedSheetId)
       .sort((a, b) => b.time - a.time)
-      .filter(record => record.name.toLowerCase().includes(query) || record.regNo.toLowerCase().includes(query));
+      .filter(record => record.name.toLowerCase().includes(query)
+        || record.regNo.toLowerCase().includes(query)
+        || String(record.cardNo).toLowerCase().includes(query));
   }
 
   function renderRows() {
@@ -195,6 +205,7 @@ if (!s || s.role === "worker") {
 
   function renderStaff() {
     if (!canManageStaffList) return;
+    $("a-staff").classList.remove("staff-menu-open");
     let users = listStaff();
     const filter = $("a-staff-filter").value;
     const query = $("a-staff-search").value.trim().toLowerCase();
@@ -214,7 +225,15 @@ if (!s || s.role === "worker") {
     users = users.filter(user => `${user.name} ${user.staffId} ${user.email}`.toLowerCase().includes(query));
     $("a-staff-rows").replaceChildren(...users.map(user => {
       const tr = document.createElement("tr");
-      [user.name, user.staffId, user.email].forEach(value => cell(tr, value));
+      const identity = cell(tr, "");
+      identity.className = "staff-identity";
+      const name = document.createElement("strong");
+      name.textContent = user.name;
+      const staffId = document.createElement("span");
+      staffId.textContent = `ID: ${user.staffId}`;
+      const email = document.createElement("span");
+      email.textContent = user.email;
+      identity.append(name, staffId, email);
 
       const roles = universal ? ["worker", "admin", "universal"] : ["worker", "admin"];
       if (!roles.includes(user.role)) roles.push(user.role);
@@ -259,13 +278,32 @@ if (!s || s.role === "worker") {
       manageLibraries.checked = user.permissions.manageLibraries;
       manageLibraries.setAttribute("aria-label", `Library status and OTP permission for ${user.name}`);
 
+      const roleField = document.createElement("label");
+      roleField.className = "staff-menu-field";
+      roleField.append(document.createTextNode("Role"), role);
+      const assignmentField = document.createElement("label");
+      assignmentField.className = "staff-menu-field";
+      assignmentField.append(document.createTextNode("Worker library"), assignment);
+      const scopeField = document.createElement("div");
+      scopeField.className = "staff-menu-field";
+      const scopeLabel = document.createElement("span");
+      scopeLabel.textContent = "Admin library scope";
+      scopeField.append(scopeLabel, scopeAllLabel, scopeLibraries);
+      const staffPermissionLabel = document.createElement("label");
+      staffPermissionLabel.className = "staff-menu-checkbox";
+      staffPermissionLabel.append(manageStaff, document.createTextNode(" Manage staff"));
+      const libraryPermissionLabel = document.createElement("label");
+      libraryPermissionLabel.className = "staff-menu-checkbox";
+      libraryPermissionLabel.append(manageLibraries, document.createTextNode(" Manage library status & OTP"));
+
       const bootstrapTarget = user.staffId.trim().toLowerCase() === "staff 5623";
       const currentAccount = user.staffId.trim().toLowerCase() === s.staffId.trim().toLowerCase();
       const syncControls = () => {
         const worker = role.value === "worker";
         const admin = role.value === "admin";
         const canEditPermissions = universal && admin;
-        assignment.hidden = !worker;
+        assignmentField.hidden = !worker;
+        scopeField.hidden = !admin;
         scopeAllLabel.hidden = !admin;
         scopeLibraries.hidden = !admin || scopeAll.checked;
         manageStaff.disabled = !canEditPermissions;
@@ -277,20 +315,49 @@ if (!s || s.role === "worker") {
         save.disabled = bootstrapTarget || currentAccount;
       };
 
-      cell(tr, "").append(role);
-      const permissionCell = cell(tr, "");
-      permissionCell.append(assignment, scopeAllLabel, scopeLibraries);
-      const staffPermissionCell = cell(tr, "");
-      staffPermissionCell.append(manageStaff);
-      const libraryPermissionCell = cell(tr, "");
-      libraryPermissionCell.append(manageLibraries);
-
       const save = document.createElement("button");
       save.className = "btn-out";
       save.textContent = "Save";
+      const menu = document.createElement("details");
+      menu.className = "staff-menu";
+      const trigger = document.createElement("summary");
+      trigger.className = "staff-menu-trigger";
+      trigger.setAttribute("aria-label", `Manage ${user.name}`);
+      for (let index = 0; index < 3; index += 1) {
+        const dot = document.createElement("span");
+        dot.className = "staff-menu-dot";
+        trigger.append(dot);
+      }
+      const menuPanel = document.createElement("div");
+      menuPanel.className = "staff-menu-panel";
+      menuPanel.append(
+        roleField,
+        assignmentField,
+        scopeField,
+        staffPermissionLabel,
+        libraryPermissionLabel,
+        save
+      );
+      menu.append(trigger, menuPanel);
+      const menuCell = cell(tr, "");
+      menuCell.className = "staff-menu-cell";
+      menuCell.append(menu);
+      menu.addEventListener("toggle", () => {
+        $("a-staff").classList.toggle(
+          "staff-menu-open",
+          document.querySelector(".staff-menu[open]") !== null
+        );
+      });
+
       role.onchange = syncControls;
       scopeAll.onchange = syncControls;
       syncControls();
+      menu.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          menu.open = false;
+          trigger.focus();
+        }
+      });
       save.onclick = () => {
         try {
           const permissions = role.value === "admin" && universal ? {
@@ -342,7 +409,7 @@ if (!s || s.role === "worker") {
         updatedBy: s.name
       });
       showOtp();
-      flash($("a-msg"), "Status saved.", true);
+      flash($("a-msg"), "Status saved.", true, 5000);
     } catch (err) {
       flash($("a-msg"), err.message, false);
     }
@@ -379,6 +446,20 @@ if (!s || s.role === "worker") {
       renderSheets();
       renderRows();
       flash($("a-msg"), "Afternoon sheet started. The previous sheet is archived.", true);
+    } catch (err) {
+      flash($("a-msg"), err.message, false);
+    }
+  };
+  $("a-rename-sheet").onclick = () => {
+    if (!lib) return;
+    const sheet = getAttendanceSheets(lib.id).find(item => item.id === selectedSheetId);
+    if (!sheet) return;
+    const name = window.prompt("Enter a new name for this attendance sheet:", sheet.name);
+    if (name === null) return;
+    try {
+      renameAttendanceSheet(lib.id, sheet.id, name);
+      renderSheets();
+      flash($("a-msg"), "Attendance sheet renamed.", true);
     } catch (err) {
       flash($("a-msg"), err.message, false);
     }

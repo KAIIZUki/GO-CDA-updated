@@ -179,6 +179,18 @@ export function attendanceForSheet(libId, sheetId) {
   return allAttendance().filter(record => record.libId === libId && record.sheetId === sheetId);
 }
 
+export function renameAttendanceSheet(libId, sheetId, name) {
+  if (!canManage(libId)) throw new Error("Not allowed for this library.");
+  const trimmedName = String(name).trim();
+  if (!trimmedName || trimmedName.length > 80) throw new Error("Enter a sheet name between 1 and 80 characters.");
+  const sheets = getAttendanceSheetsState();
+  const sheet = sheets.find(item => item.libId === libId && item.id === sheetId);
+  if (!sheet) throw new Error("Attendance sheet not found.");
+  sheet.name = trimmedName;
+  write(K.sheets, sheets);
+  return sheet;
+}
+
 export function startAfternoonSheet(libId) {
   if (!canManage(libId)) throw new Error("Not allowed for this library.");
   const sheets = getAttendanceSheetsState();

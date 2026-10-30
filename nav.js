@@ -10,6 +10,12 @@ function closeMenus(except) {
   }
 }
 
+function closeStaffMenus(except) {
+  for (const menu of document.querySelectorAll(".staff-menu[open]")) {
+    if (menu !== except) menu.open = false;
+  }
+}
+
 for (const toggle of toggles) {
   const menu = document.getElementById(toggle.getAttribute("aria-controls"));
   if (!menu) continue;
@@ -17,6 +23,7 @@ for (const toggle of toggles) {
   toggle.addEventListener("click", () => {
     const opening = toggle.getAttribute("aria-expanded") !== "true";
     closeMenus(toggle);
+    closeStaffMenus();
     toggle.setAttribute("aria-expanded", String(opening));
     toggle.setAttribute("aria-label", opening ? "Close menu" : "Open menu");
     menu.classList.toggle("is-open", opening);
@@ -32,9 +39,31 @@ for (const toggle of toggles) {
 }
 
 document.addEventListener("click", event => {
-  if (!event.target.closest("[data-menu-toggle], .menu-panel")) closeMenus();
+  const target = event.target instanceof Element ? event.target : null;
+  const clickedToggle = target?.closest("[data-menu-toggle]");
+  const clickedPanel = target?.closest(".menu-panel");
+  const clickedStaffMenu = target?.closest(".staff-menu");
+
+  if (clickedToggle) {
+    closeStaffMenus();
+    return;
+  }
+  if (clickedPanel) {
+    closeStaffMenus();
+    return;
+  }
+  if (clickedStaffMenu) {
+    closeMenus();
+    closeStaffMenus(clickedStaffMenu);
+    return;
+  }
+  closeMenus();
+  closeStaffMenus();
 });
 
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape") closeMenus();
+  if (event.key === "Escape") {
+    closeMenus();
+    closeStaffMenus();
+  }
 });

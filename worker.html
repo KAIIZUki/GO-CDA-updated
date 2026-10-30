@@ -63,12 +63,15 @@
             <div class="a-row between">
                 <h2>Attendance (<span id="a-inside">0</span> inside)</h2>
                 <div class="a-row">
-                    <input type="search" id="a-search" placeholder="Search name or reg no.">
+                    <input type="search" id="a-search" placeholder="Search name, reg no. or card no.">
                     <button type="button" class="btn-gold" id="a-csv">Export CSV</button>
                 </div>
             </div>
             <div class="a-row a-attendance-controls">
-                <select id="a-sheet-select" aria-label="Attendance sheet"></select>
+                <div class="sheet-name-controls">
+                    <select id="a-sheet-select" aria-label="Attendance sheet"></select>
+                    <button type="button" class="btn-gold" id="a-rename-sheet">Rename selected sheet</button>
+                </div>
                 <select id="a-level-filter" aria-label="Filter by level">
                     <option value="all">All levels</option>
                     <option value="100">100 level</option>

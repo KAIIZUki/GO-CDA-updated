@@ -9,7 +9,7 @@ function msg(el, text, ok = false) {
 
 const fillLibraries = sel => sel && LIBRARIES.forEach(l => sel.append(new Option(l.name, l.id)));
 
-// ---------- staff login page ----------
+// staff login page 
 if ($("log-box") && $("loginStaffId")) {
   const session = getSession();
   if (session) location.replace(session.role === "worker" ? "worker.html" : "admin.html");
@@ -43,7 +43,7 @@ if ($("log-box") && $("loginStaffId")) {
   });
 }
 
-// ---------- student attendance page ----------
+// student attendance page 
 const form = $("att-form");
 if (form) {
   fillLibraries($("Library"));
